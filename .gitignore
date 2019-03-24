@@ -1,0 +1,5 @@
+floccus
+*.bak
+*.dat
+*.dir
+.idea
