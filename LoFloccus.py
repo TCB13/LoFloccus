@@ -47,9 +47,9 @@ def start_server():
         "enable_loggers": [],
         "http_authenticator": {
             "domain_controller": None,
-            "accept_basic": False,
+            "accept_basic": True,
             "accept_digest": True,
-            "default_to_digest": True
+            "default_to_digest": False
 
         },
         "simple_dc": {
