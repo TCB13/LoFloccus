@@ -3,3 +3,4 @@ floccus
 *.dat
 *.dir
 .idea
+venv
