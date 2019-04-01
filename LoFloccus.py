@@ -1,6 +1,5 @@
 # pip install wsgidav cheroot pystray
-# Make Windows .exe with: pyinstaller -i icon.ico -F -w .\LoFloccus.py
-
+import os
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
@@ -86,7 +85,7 @@ def start_server():
 def stop_server():
     global server
 
-    print("Stopping server...");
+    print("Stopping server...")
     btnServer.config(state="disabled")
     btnChangeDir.config(state="active")
 
@@ -129,7 +128,7 @@ def change_dir():
 
 def on_closing():
     global window
-    if messagebox.askokcancel("Quit", "Do you want to quit? You won't be able to sync your favourites."):
+    if messagebox.askokcancel("Quit", "Do you want to quit? You won't be able to sync your bookmarks."):
         stop_server()
         window.destroy()
 
@@ -147,7 +146,7 @@ def hide_tray():
 
     # Create tray icon
     icon = pystray.Icon("Floccus Local XBEL")
-    icon.icon = Image.open("logo.png")
+    icon.icon = Image.open(os.path.join(os.path.dirname(os.path.realpath(__file__)),"logo.png"))
     icon.visible = True
     icon.menu = Menu(
         MenuItem("Open", lambda: restore_tray(icon, False)),
@@ -167,7 +166,8 @@ def restore_tray(icon, close):
     window.overrideredirect(False)
     window.update()
     window.deiconify()
-    window.attributes("-topmost", True)
+    window.lift()
+    window.attributes('-topmost', True)
 
     if close:
         on_closing()
@@ -181,8 +181,8 @@ def check_toggle(key, value):
 
 
 window = Tk()
-window.title("LoFloccus - v1.0")
-window.iconbitmap("icon.ico")
+window.title("LoFloccus - v1.0.1")
+window.iconbitmap(os.path.join(os.path.dirname(os.path.realpath(__file__)),"icon.ico"))
 window.resizable(False, False)
 # Window Size and Positioning
 windowWidth = 480
@@ -198,7 +198,7 @@ labelPad = (20, 0)
 
 # Title
 
-img = ImageTk.PhotoImage(Image.open("logo.png"))
+img = ImageTk.PhotoImage(Image.open(os.path.join(os.path.dirname(os.path.realpath(__file__)),"logo.png")))
 panel = Label(window, image=img)
 panel.grid(column=0, row=0, columnspan=2,
            pady=(20, 0))
