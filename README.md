@@ -12,8 +12,7 @@ Unfortunately (and due to browser restrictions) you can't simply store your brow
 This tool was designed to:
 1) Accept WebDAV connections from the localhost;
 2) Generate a random port, username and password for each setup;
-3) Only accept HTP digest auth;
-4) Store your XBEL location and other settings across sessions;
-5) Minimize to Windows tray / macOS top bar.
+3) Store your XBEL location and other settings across sessions;
+4) Minimize to Windows tray / macOS top bar.
 
 Enjoy the best of Floccus and combine it with favourite sync tool!

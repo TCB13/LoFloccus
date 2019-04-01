@@ -4,3 +4,5 @@ floccus
 *.dir
 .idea
 venv
+windows/LoFloccus.exe
+windows/LoFloccus.res
