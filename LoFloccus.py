@@ -1,4 +1,10 @@
-# pip install wsgidav cheroot pystray
+# Welcome to LoFloccus!
+#
+# Create venv with PyCharm (Ctrl+Alt+S > Project Interpreter > Add > Virtual Environment)
+# Install required packages via PyCharm
+# Export requirements: .\venv\Scripts\pip.exe freeze > requirements.txt
+#
+
 import os
 from tkinter import *
 from tkinter import messagebox
