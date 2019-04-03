@@ -3,9 +3,13 @@ Sync Floccus with a local XBEL file.
 
 **LoFloccus** is a small companion app for Floccus that empowers you to sync your bookmarks with whatever service or tool you would like to!
 
-- **Download LoFloccus for Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.0.1/LoFloccus-1-0-1.zip
-
 ![LoFloccus](https://cdn.iklive.eu/tcb13/2019/lofloccus.png)
+
+## Download LoFloccus
+
+- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.0.1/LoFloccus-1-0-1.zip
+
+## Why and How
 
 **Floccus** (https://github.com/marcelklehr/floccus) is a great browser extensions that allows you to sync your browser bookmarks with your selfhosted server (e.g. Nextcloud or a WebDAV server).
 
