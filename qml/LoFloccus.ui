@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>461</width>
-    <height>442</height>
+    <height>453</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,11 +22,11 @@
   <property name="baseSize">
    <size>
     <width>461</width>
-    <height>434</height>
+    <height>453</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>LoFloccus - v1.1.1</string>
+   <string>LoFloccus</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -46,76 +46,87 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
+      <y>380</y>
       <width>441</width>
-      <height>71</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
     <property name="title">
-     <string>App Settings</string>
+     <string/>
     </property>
-    <widget class="QCheckBox" name="start_minimized">
+    <widget class="QWidget" name="verticalLayoutWidget_2">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
-       <width>361</width>
-       <height>17</height>
+       <y>10</y>
+       <width>421</width>
+       <height>46</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Start minimized to system tray (Windows) or top menu bar (macOS)</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="start_open">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>361</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Start the server on launch</string>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="start_minimized">
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Start minimized to system tray (Windows) or top menu bar (macOS)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="start_open">
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Start the server on launch</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>220</y>
+      <y>240</y>
       <width>441</width>
-      <height>121</height>
+      <height>111</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
     <property name="title">
-     <string>Connect your Floccus Browser Extension</string>
+     <string/>
     </property>
     <property name="flat">
      <bool>false</bool>
@@ -127,10 +138,16 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>60</y>
+       <y>50</y>
        <width>401</width>
-       <height>51</height>
+       <height>55</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>9</pointsize>
+      </font>
      </property>
      <layout class="QFormLayout" name="_2">
       <property name="formAlignment">
@@ -140,12 +157,14 @@
        <number>20</number>
       </property>
       <property name="verticalSpacing">
-       <number>5</number>
+       <number>4</number>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_10">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -159,6 +178,8 @@
        <widget class="QLabel" name="srv_addr">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -184,6 +205,8 @@
        <widget class="QLabel" name="label_11">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -197,6 +220,8 @@
        <widget class="QLabel" name="srv_user">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -222,6 +247,8 @@
        <widget class="QLabel" name="label_12">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -235,6 +262,8 @@
        <widget class="QLabel" name="srv_passwd">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -262,10 +291,16 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
+       <y>10</y>
        <width>421</width>
        <height>36</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>9</pointsize>
+      </font>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
@@ -275,6 +310,8 @@
        <widget class="QLabel" name="label">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -288,6 +325,8 @@
        <widget class="QLabel" name="label_2">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -304,40 +343,68 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>110</y>
+      <y>120</y>
       <width>441</width>
-      <height>101</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
     <property name="title">
-     <string>Status</string>
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
     </property>
     <widget class="QWidget" name="formLayoutWidget">
      <property name="geometry">
       <rect>
        <x>9</x>
-       <y>20</y>
+       <y>10</y>
        <width>421</width>
-       <height>34</height>
+       <height>37</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
      <layout class="QFormLayout">
+      <property name="labelAlignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+      <property name="formAlignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
       <property name="horizontalSpacing">
        <number>20</number>
       </property>
       <property name="verticalSpacing">
-       <number>5</number>
+       <number>4</number>
       </property>
       <item row="0" column="1">
        <widget class="QLabel" name="srv_status">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -351,6 +418,8 @@
        <widget class="QLabel" name="label_6">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -364,6 +433,8 @@
        <widget class="QLabel" name="label_7">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -377,6 +448,8 @@
        <widget class="QLabel" name="xbel_path">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -392,10 +465,16 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>60</y>
+       <y>50</y>
        <width>421</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>9</pointsize>
+      </font>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="horizontalSpacing">
@@ -405,6 +484,8 @@
        <widget class="QPushButton" name="btn_xbel_localtion">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -418,6 +499,8 @@
        <widget class="QPushButton" name="btn_server_control">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>10</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -441,6 +524,8 @@
        <widget class="QPushButton" name="btn_hide_tray">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>10</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -453,17 +538,18 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QLabel" name="logo_label">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>60</y>
       <width>441</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Arial</family>
       <pointsize>14</pointsize>
       <weight>75</weight>
       <bold>true</bold>
@@ -476,7 +562,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="description_label">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -487,6 +573,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Arial</family>
       <pointsize>10</pointsize>
       <weight>75</weight>
       <bold>true</bold>
@@ -508,6 +595,11 @@
       <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+     </font>
+    </property>
     <property name="text">
      <string/>
     </property>
@@ -518,8 +610,49 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="connect_label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>220</y>
+      <width>431</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Connect your Floccus Browser Extension</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="settings_label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>360</y>
+      <width>431</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>App Settings</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
