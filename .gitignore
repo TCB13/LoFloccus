@@ -1,8 +1,10 @@
-floccus
 *.bak
 *.dat
 *.dir
 .idea
-venv
-windows/LoFloccus.exe
-windows/LoFloccus.res
+deploy
+windows
+deploy
+rcc*
+*.syso
+
