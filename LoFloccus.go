@@ -36,6 +36,7 @@ type AppSettings struct {
 }
 
 var (
+	appVersion   = "1.1.2"
 	configFile   = "LoFloccus-Settings.ini"
 	cfg *ini.File
 	windowWidget *widgets.QWidget
@@ -73,6 +74,8 @@ func main() {
 	windowWidget = loader.Load(file, nil)
 	windowWidget.SetFixedSize2(windowWidget.Width(), windowWidget.Height())
 	windowWidget.SetWindowIcon(icon)
+	windowWidget.SetStyleSheet("QWidget{font-size:12px}");
+	windowWidget.SetWindowTitle(windowWidget.WindowTitle() + " v" + appVersion)
 	windowWidget.ConnectDestroyQWidget(func() {
 		exitApp()
 	})
@@ -80,6 +83,8 @@ func main() {
 
 	var (
 		uiLogo = widgets.NewQLabelFromPointer(windowWidget.FindChild("logo", core.Qt__FindChildrenRecursively).Pointer())
+		uiLogoLabel = widgets.NewQLabelFromPointer(windowWidget.FindChild("logo_label", core.Qt__FindChildrenRecursively).Pointer())
+		uiDescriptionLabel = widgets.NewQLabelFromPointer(windowWidget.FindChild("description_label", core.Qt__FindChildrenRecursively).Pointer())
 
 		uiSrvStatus = widgets.NewQLabelFromPointer(windowWidget.FindChild("srv_status", core.Qt__FindChildrenRecursively).Pointer())
 		uiXBELPath  = widgets.NewQLabelFromPointer(windowWidget.FindChild("xbel_path", core.Qt__FindChildrenRecursively).Pointer())
@@ -92,12 +97,20 @@ func main() {
 		uiBtnServerControl = widgets.NewQPushButtonFromPointer(windowWidget.FindChild("btn_server_control", core.Qt__FindChildrenRecursively).Pointer())
 		uiBtnHideControl   = widgets.NewQPushButtonFromPointer(windowWidget.FindChild("btn_hide_tray", core.Qt__FindChildrenRecursively).Pointer())
 
+		uiConnectLabel = widgets.NewQLabelFromPointer(windowWidget.FindChild("connect_label", core.Qt__FindChildrenRecursively).Pointer())
+		uiSettingsLabel = widgets.NewQLabelFromPointer(windowWidget.FindChild("settings_label", core.Qt__FindChildrenRecursively).Pointer())
+
 		uiSettingsStartMinimized = widgets.NewQCheckBoxFromPointer(windowWidget.FindChild("start_minimized", core.Qt__FindChildrenRecursively).Pointer())
 		uiSettingsStartServer = widgets.NewQCheckBoxFromPointer(windowWidget.FindChild("start_open", core.Qt__FindChildrenRecursively).Pointer())
 	)
 
 	var pixMap = gui.NewQPixmap5(":/qml/logo.png", "", core.Qt__NoFormatConversion)
 	uiLogo.SetPixmap(pixMap)
+
+	uiLogoLabel.SetStyleSheet("QLabel{font-size:16px;font-weight:600;}");
+	uiDescriptionLabel.SetStyleSheet("QLabel{font-size:14px;font-weight:600;}");
+	uiConnectLabel.SetStyleSheet("QLabel{font-weight:600;}");
+	uiSettingsLabel.SetStyleSheet("QLabel{font-weight:600;}");
 
 	uiSrvAddr.SetText("http://" + serverConfig.address + ":" + strconv.Itoa(serverConfig.port))
 	uiSrvUser.SetText(serverConfig.user);
@@ -192,7 +205,7 @@ func setupSystray(icon *gui.QIcon) {
 	tray.SetToolTip("LoFloccus App")
 	tray.SetContextMenu(menu)
 	tray.ConnectActivated(func(reason widgets.QSystemTrayIcon__ActivationReason) {
-		if reason != widgets.QSystemTrayIcon__Context {
+		if reason != widgets.QSystemTrayIcon__Context && core.QSysInfo_ProductType() == "windows" {
 			windowWidget.Show()
 		}
 	})
@@ -205,6 +218,7 @@ func exitApp() {
 }
 
 func loadAppConfig() {
+	configFile = core.QStandardPaths_WritableLocation(core.QStandardPaths__AppConfigLocation) + "/" + configFile
 	var err error
 	cfg, err = ini.Load(configFile)
 	if err != nil {

@@ -1,21 +1,21 @@
 IDI_ICON1 ICON DISCARDABLE "qml/icon.ico"
 
 1 VERSIONINFO
-FILEVERSION     1,1,1,0
-PRODUCTVERSION  1,1,1,0
+FILEVERSION     1,1,2,0
+PRODUCTVERSION  1,1,2,0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
     BLOCK "040904E4"
     BEGIN
       VALUE "CompanyName", "LoFloccus"
-      VALUE "FileDescription", "Sync Floccus to a Local Folder!"
-      VALUE "FileVersion", "1.1.1"
+      VALUE "FileDescription", "LoFloccus"
+      VALUE "FileVersion", "1.1.2"
       VALUE "InternalName", "LoFloccus"
       VALUE "LegalCopyright", "LoFloccus"
       VALUE "OriginalFilename", "LoFloccus.exe"
       VALUE "ProductName", "LoFloccus"
-      VALUE "ProductVersion", "1.1.1"
+      VALUE "ProductVersion", "1.1.2"
     END
   END
   BLOCK "VarFileInfo"

@@ -3,12 +3,12 @@ Sync Floccus to a Local Folder!
 
 **LoFloccus** is a small companion app for Floccus that empowers you to sync your bookmarks with whatever service or tool you would like to!
 
-![LoFloccus](https://cdn.iklive.eu/tcb13/2019/lofloccus-1-1-0.png)
+![LoFloccus](https://cdn.iklive.eu/tcb13/2019/lofloccus-1-1-0.png) 
 
 ## Download LoFloccus
 
-- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.1.1/LoFloccus-1-1-1.zip
-- **macOS**: Available Soon!
+- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.1.2/LoFloccus-Win.zip
+- **macOS**: https://github.com/TCB13/LoFloccus/releases/download/1.1.2/LoFloccus-macOS.zip
 
 ## Why and How
 
@@ -29,16 +29,23 @@ Enjoy the best of Floccus and combine it with favourite sync tool!
 
 LoFloccus was built using Golang and Qt.
 
-#### Windows
-**Develop**:
+#### Develop
 1. Install Qt
 2. Install https://github.com/therecipe/qt
-3. Add user variable `CGO_LDFLAGS`: `C:\Users\Public\env_windows_amd64_Tools\mingw730_64\x86_64-w64-mingw32\lib\libmsvcrt.a`
-4. Add to user `Path` variable: `C:\Users\Public\env_windows_amd64\5.12.0\mingw73_64\bin` and `C:\Users\Public\env_windows_amd64_Tools\mingw730_64\bin`
+3. (Windows only) Add user variable `CGO_LDFLAGS`: `C:\Users\Public\env_windows_amd64_Tools\mingw730_64\x86_64-w64-mingw32\lib\libmsvcrt.a`
+4. (Windows only) Add to user `Path` variable: `C:\Users\Public\env_windows_amd64\5.12.0\mingw73_64\bin` and `C:\Users\Public\env_windows_amd64_Tools\mingw730_64\bin`
 5. `go run LoFloccus.go`!
 
-**Deploy**:
+### Deploy for Windows
 1. `cd LoFloccus`
 2. `windres.exe .\Windows.rc -o Windows.syso`
 3. `qtdeploy build desktop .`
 4. Run `deploy/windows/LoFloccus.exe`!
+
+### Deploy for macOS
+1. `cd LoFloccus`
+2. (Optionally) Install imagemagick `brew update && brew install imagemagick`
+3. (Optionally) `generate-icns-from-svg.sh`
+4. (Optionally) Move `icon.icns` to `darwin\Contents\Resources`
+5. `qtdeploy build desktop .`
+6. Run `deploy/darwin/LoFloccus.app`
