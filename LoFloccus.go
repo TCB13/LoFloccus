@@ -286,7 +286,7 @@ func serverStart() {
 		}
 
 		// Restrict WebDav to the current folder & read/writes to .xbel files
-		if (!strings.HasSuffix(request.RequestURI, ".xbel") && request.RequestURI != "/") || (request.RequestURI == "/" && (request.Method != "HEAD" && request.Method != "PROPFIND")) {
+		if (!strings.HasSuffix(request.RequestURI, ".xbel") && !strings.HasSuffix(request.RequestURI, ".xbel.lock") && request.RequestURI != "/") || (request.RequestURI == "/" && (request.Method != "HEAD" && request.Method != "PROPFIND")) {
 			errorFsAccessMsg := "LoFloccus: unauthorized filesystem access detected. LoFloccus WebDAV server is restricted to '*.xbel' files."
 			log.Printf(request.RequestURI)
 			log.Printf(request.Method)
