@@ -3,12 +3,15 @@ Sync Floccus to a Local Folder!
 
 **LoFloccus** is a small companion app for Floccus that empowers you to sync your bookmarks with whatever service or tool you would like to!
 
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![Mac OS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)
+
 ![LoFloccus](https://cdn.iklive.eu/tcb13/2021/lofloccus-1-2-0.png.png) 
 
 ## Download LoFloccus
 
-- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.2.0/LoFloccus-Win.zip
-- **macOS**: https://github.com/TCB13/LoFloccus/releases/download/1.1.2/LoFloccus-macOS.zip
+- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.2.1/LoFloccus-Win.zip
+- **macOS**: https://github.com/TCB13/LoFloccus/releases/download/1.2.1/LoFloccus-macOS.zip
 
 ## Why and How
 

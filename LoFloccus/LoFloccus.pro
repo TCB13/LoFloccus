@@ -26,7 +26,7 @@ FORMS += \
     lofloccus.ui
 
 # Generic for all builds
-VERSION = 1.2.0
+VERSION = 1.2.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 INCLUDEPATH += $${PWD}/libs
 
@@ -44,6 +44,11 @@ mac {
     ICON = assets/icon.icns
     QMAKE_TARGET_BUNDLE_PREFIX = "com.tcb13"
     LIBS += -L$${PWD}/libs -lLoFloccusDavDarwin
+
+    SOURCES += platformdarwin.mm
+    HEADERS += platformdarwin.h
+    LIBS += -framework Foundation
+    LIBS += -framework AppKit
 }
 
 
@@ -59,12 +64,13 @@ RESOURCES += \
 
 # Static Builds
 QTPREFIX=$$[QT_INSTALL_PREFIX]
-equals(QTPREFIX, "C:/Qt-Static/Qt-5.14.2"){
+equals(QTPREFIX, "C:/Qt-Static/Qt-5.14.2") || equals(QTPREFIX, "/Users/tcb13/Qt-Static/Qt-5.12.12") {
     message("--STATIC BUILD--")
     CONFIG += qt static
-    QMAKE_LFLAGS += -static-libgcc -static-libstdc++
+    win32 {
+        QMAKE_LFLAGS += -static-libgcc -static-libstdc++
+    }
+
 } else {
     message("--NON-STATIC BUILD--")
 }
-
-

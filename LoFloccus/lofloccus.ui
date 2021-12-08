@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>462</width>
-    <height>451</height>
+    <height>413</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,7 +55,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>300</y>
+      <y>260</y>
       <width>431</width>
       <height>16</height>
      </rect>
@@ -116,40 +116,11 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_server_control">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>90</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Start Server</string>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/assets/icon.ico</normaloff>:/assets/icon.ico</iconset>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-    <property name="autoDefault">
-     <bool>false</bool>
-    </property>
-    <property name="flat">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="Line" name="line">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>130</y>
+      <y>90</y>
       <width>441</width>
       <height>16</height>
      </rect>
@@ -162,7 +133,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>180</y>
+      <y>140</y>
       <width>421</width>
       <height>91</height>
      </rect>
@@ -171,13 +142,6 @@
      <property name="spacing">
       <number>4</number>
      </property>
-     <item>
-      <widget class="QCheckBox" name="startopen">
-       <property name="text">
-        <string>Start the server on launch</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QCheckBox" name="startminimized">
        <property name="text">
@@ -199,13 +163,20 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QCheckBox" name="portablemode">
+       <property name="text">
+        <string>Run in portable mode (settings are saved on the app directory)</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>330</y>
+      <y>290</y>
       <width>411</width>
       <height>36</height>
      </rect>
@@ -234,7 +205,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>380</y>
+      <y>340</y>
       <width>401</width>
       <height>51</height>
      </rect>
@@ -336,7 +307,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>150</y>
+      <y>110</y>
       <width>421</width>
       <height>27</height>
      </rect>
@@ -433,7 +404,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>280</y>
+      <y>240</y>
       <width>441</width>
       <height>16</height>
      </rect>
