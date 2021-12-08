@@ -8,8 +8,9 @@ Complied with:
 How to install/compile this as a static library:
 1. go get "golang.org/x/net/webdav"
 2. Build ir for your architecture:
-2.1. Windows: go build -buildmode c-archive -o libLoFloccusDavWin64.a libLoFloccusDav.go
-2.2. macOS: go build -buildmode c-shared -o libLoFloccusDavDarwin.a libLoFloccusDav.go
+2.1. Windows (dev/release): go build -buildmode c-archive -o libLoFloccusDavWin64.a libLoFloccusDav.go
+2.2. macOS (dev): go build -buildmode c-shared -o libLoFloccusDavDarwin.a libLoFloccusDav.go
+2.3. macOS (release): go build -buildmode c-archive -o libLoFloccusDavDarwin.a libLoFloccusDav.go
  */
 
 package main 

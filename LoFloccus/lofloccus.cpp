@@ -28,12 +28,16 @@ LoFloccus::LoFloccus(QWidget *parent)
     appIcon = QIcon(":/assets/icon.ico");
     running = false;
 
+    #ifdef Q_OS_DARWIN
+    darwinBridge = new PlatformDarwin();
+    #endif
+
     // Make sure nobody can resize the app under any platform
     this->setFixedSize(this->width(), this->height());
     this->setWindowTitle(this->windowTitle() + " - v" + APP_VERSION);
 
     // Fetch settings from storage and/or write defaults
-    this->initSettings();
+    this->initSettings(false, false);
 
     // Populate UI with the loaded settings
     this->reloadUiState();
@@ -49,17 +53,16 @@ LoFloccus::LoFloccus(QWidget *parent)
         showMinimized();
     }
     if (settings->value("startminimized").toBool() && settings->value("hidetosystray").toBool()) {
+       #ifdef Q_OS_DARWIN
+       darwinBridge->makeAppAccessory();
+       #endif
        sysTray->showMessage("LoFloccus", "LoFloccus is running in the background. Click the menu for more options.", appIcon);
     }
 
-    // Start the server with the app if required
-    if (settings->value("startopen").toBool()) {
-        this->startServer();
-    }
-
+    // Start the server with the app
+    this->startServer();
 }
 
-#ifdef Q_OS_WIN
 void LoFloccus::closeEvent(QCloseEvent *event)
 {
     if (minimizeAndCloseToTray) {
@@ -75,10 +78,12 @@ void LoFloccus::hideEvent(QHideEvent *event)
     event->accept();
     if (minimizeAndCloseToTray) {
         hide();
+        #ifdef Q_OS_DARWIN
+        darwinBridge->makeAppAccessory();
+        #endif
         sysTray->showMessage("LoFloccus", "LoFloccus is running in the background. Click the menu for more options.", appIcon);
     }
 }
-#endif
 
 LoFloccus::~LoFloccus()
 {
@@ -90,10 +95,29 @@ LoFloccus::~LoFloccus()
     delete ui;
 }
 
-void LoFloccus::initSettings()
-{
-    // Initialized a shared settings object with the appropriate path
-    settings = new QSettings(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/settings.ini", QSettings::IniFormat);
+void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool makeExistingSettingsLocal = false)
+{   
+    QString localSettingsFile = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/settings.ini";
+    QString portableSettingsFile = "lofloccus-settings.ini";
+
+    // Deal with settings location move
+    if (makeExistingSettingsPortable) {
+        if (QFile::exists(portableSettingsFile)) {
+            QFile::remove(portableSettingsFile);
+        }
+        QFile::copy(localSettingsFile, portableSettingsFile);
+        QFile::remove(localSettingsFile);
+    }
+    if (makeExistingSettingsLocal) {
+        if (QFile::exists(localSettingsFile)) {
+            QFile::remove(localSettingsFile);
+        }
+        QFile::copy(portableSettingsFile, localSettingsFile);
+        QFile::remove(portableSettingsFile);
+    }
+
+    // Initialize a shared settings object with the appropriate path
+    settings = new QSettings(QFile::exists(portableSettingsFile) ? portableSettingsFile : localSettingsFile, QSettings::IniFormat);
 
     // Generate random defaults for port and password
     QString defaultPort = QString::number(QRandomGenerator::global()->bounded(40000, 65535));
@@ -107,15 +131,14 @@ void LoFloccus::initSettings()
     settings->setValue("serveruser", settings->value("serveruser", "floccus"));
     settings->setValue("serverpasswd", settings->value("serverpasswd", defaultPasswd));
 
-    settings->setValue("startopen", settings->value("startopen", false));
     settings->setValue("startminimized", settings->value("startminimized", false));
     settings->setValue("hidetosystray", settings->value("hidetosystray", false));
     settings->setValue("sharednetwork", settings->value("sharednetwork", false));
+    settings->setValue("portablemode", settings->value("portablemode", false));
 }
 
 void LoFloccus::reloadUiState()
 {
-    ui->btn_server_control->setText(running ? "Stop LoFloccus Server": "Start LoFloccus Server");
     ui->xbel_path->setText(settings->value("serverpath").toString());
 
     // Take care of the server addresses, might be just local or all IPs of the machine
@@ -130,10 +153,10 @@ void LoFloccus::reloadUiState()
     ui->srv_user->setText(settings->value("serveruser").toString());
     ui->srv_passwd->setText(settings->value("serverpasswd").toString());
 
-    ui->startopen->setChecked(settings->value("startopen").toBool());
     ui->startminimized->setChecked(settings->value("startminimized").toBool());
     ui->hidetosystray->setChecked(settings->value("hidetosystray").toBool());
     ui->sharednetwork->setChecked(settings->value("sharednetwork").toBool());
+    ui->portablemode->setChecked(settings->value("portablemode").toBool());
 }
 
 void LoFloccus::initSystray()
@@ -147,6 +170,9 @@ void LoFloccus::initSystray()
 
     QAction *openAction = new QAction("Open LoFloccus", this);
     connect(openAction, &QAction::triggered, [this]() {
+        #ifdef Q_OS_DARWIN
+        darwinBridge->makeAppRegular();
+        #endif
         showNormal();
         activateWindow();
     });
@@ -184,25 +210,19 @@ void LoFloccus::restartServer()
 
 void LoFloccus::startServer()
 {
-    ui->btn_server_control->setDisabled(true);
-    ui->btn_server_control->setChecked(false);
     serverStart(settings->value("serveraddr").toString().toUtf8().data(),
                 settings->value("serverport").toString().toUtf8().data(),
                 settings->value("serverpath").toString().toUtf8().data(),
                 settings->value("serveruser").toString().toUtf8().data(),
                 settings->value("serverpasswd").toString().toUtf8().data()
                 );
-    ui->btn_server_control->setDisabled(false);
     running = true;
     this->reloadUiState();
 }
 
 void LoFloccus::stopServer()
 {
-    ui->btn_server_control->setDisabled(true);
-    ui->btn_server_control->setChecked(false);
     serverStop();
-    ui->btn_server_control->setDisabled(false);
     running = false;
     this->reloadUiState();
 }
@@ -225,16 +245,6 @@ QList<QString> LoFloccus::getSystemIPAddresses(bool locals = true, bool v4 = tru
     return returnList;
 }
 
-
-void LoFloccus::on_btn_server_control_clicked()
-{
-    if (running) {
-        this->stopServer();
-    } else {
-        this->startServer();
-    }
-}
-
 void LoFloccus::on_btn_xbel_localtion_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this,
@@ -245,17 +255,19 @@ void LoFloccus::on_btn_xbel_localtion_clicked()
         return;
     }
     settings->setValue("serverpath", dir);
-    if (!running) {
-        this->reloadUiState();
-    }
     this->restartServer();
 }
 
 
 
-void LoFloccus::on_startopen_clicked()
+void LoFloccus::on_portablemode_clicked()
 {
-    settings->setValue("startopen", ui->startopen->isChecked());
+    if (ui->portablemode->isChecked()) {
+        this->initSettings(true, false);
+    } else {
+        this->initSettings(false, true);
+    }
+    settings->setValue("portablemode", ui->portablemode->isChecked());
 }
 
 void LoFloccus::on_startminimized_clicked()
@@ -275,3 +287,4 @@ void LoFloccus::on_sharednetwork_clicked()
     settings->setValue("serveraddr", ui->sharednetwork->isChecked() ? "0.0.0.0" : "127.0.0.1");
     this->restartServer();
 }
+
