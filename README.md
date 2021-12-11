@@ -6,12 +6,12 @@ Sync Floccus to a Local Folder!
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 ![Mac OS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)
 
-![LoFloccus](https://cdn.iklive.eu/tcb13/2021/lofloccus-1-2-1.png)
+![LoFloccus](https://cdn.iklive.eu/tcb13/2021/lofloccus-1-2-2.png)
 
 ## Download LoFloccus
 
-- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.2.1/LoFloccus-Win.zip
-- **macOS**: https://github.com/TCB13/LoFloccus/releases/download/1.2.1/LoFloccus-macOS.zip
+- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.2.2/LoFloccus-1-2-2-Win.zip
+- **macOS**: https://github.com/TCB13/LoFloccus/releases/download/1.2.2/LoFloccus-1-2-2-macOS.zip
 
 ## Why and How
 
@@ -28,25 +28,10 @@ This tool was designed to:
 
 Enjoy the best of Floccus and combine it with favourite sync tool!
 
-## Compile from Source
+## Compile from Source / Dev Information
 LoFloccus was developed with Qt Creator 4.11.1, Qt 5.14.1 and Golang 1.14.2.
 
 1. Install Qt
 2. Install Golang
 3. (Optionally) compile libs/libLoFloccusDav.go as described on the file
 4. Open the project in Qt Creator and run it.
-
-### Deploy for Windows
-1. `cd LoFloccus`
-2. `windres.exe .\Windows.rc -o Windows.syso`
-3. (Optionally) `cd libs; go build -buildmode c-shared -o libLoFloccusDavWin64.a libLoFloccusDav.go; cd ..`
-4. `qtdeploy build desktop .`
-5. Run `deploy/windows/LoFloccus.exe`!
-
-### Deploy for macOS
-1. `cd LoFloccus`
-2. (Optionally) Install imagemagick `brew update && brew install imagemagick`
-3. (Optionally) `generate-icns-from-svg.sh`
-4. (Optionally) `cd libs; go build -buildmode c-shared -o libLoFloccusDavDarwin.a libLoFloccusDav.go; cd ..`
-5. `qtdeploy build desktop .`
-6. Run `deploy/darwin/LoFloccus.app`
