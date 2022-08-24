@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.11.1, 2022-04-01T16:20:49. -->
+<!-- Written by QtCreator 4.11.1, 2022-08-24T21:13:29. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -287,8 +287,9 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/Users/Tadeu Bento/Projetos/LoFloccus/LoFloccus/LoFloccus.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/Tadeu Bento/Projetos/LoFloccus/LoFloccus/LoFloccus.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">LoFloccus2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/Users/Tadeu Bento/Source/GitHub/LoFloccus/LoFloccus/LoFloccus.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/Tadeu Bento/Source/GitHub/LoFloccus/LoFloccus/LoFloccus.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -299,7 +300,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/Tadeu Bento/Projetos/LoFloccus/build-LoFloccus-Desktop_Static-Release</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

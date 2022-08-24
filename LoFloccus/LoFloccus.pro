@@ -26,7 +26,7 @@ FORMS += \
     lofloccus.ui
 
 # Generic for all builds
-VERSION = 1.2.3
+VERSION = 1.2.4
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 INCLUDEPATH += $${PWD}/libs
 

@@ -10,8 +10,8 @@ Sync Floccus to a Local Folder!
 
 ## Download LoFloccus
 
-- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.2.3/LoFloccus-1-2-3-Win.zip
-- **macOS**: https://github.com/TCB13/LoFloccus/releases/download/1.2.3/LoFloccus-1-2-3-macOS.zip
+- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.2.4/LoFloccus-1-2-4-Win.zip
+- **macOS**: https://github.com/TCB13/LoFloccus/releases/download/1.2.4/LoFloccus-1-2-4-macOS.zip
 
 ## Why and How
 
@@ -21,9 +21,9 @@ Due to browser restrictions, you can't store your browser bookmarks in a local f
 
 This tool was designed to:
 1) Accept WebDAV connections from the Floccus;
-2) Restrict Floccus access to a single directory and read/write access limited to `*.xbel` bookmarks files;
+2) Restrict Floccus access to a single directory and read/write access limited to `*.xbel` and `*.html` bookmarks files;
 3) Generate a random port, username and password for each setup;
-4) Store your XBEL bookmarks location and other settings across sessions;
+4) Store your XBEL/HTML bookmarks location and other settings across sessions;
 5) Minimize to Windows tray / macOS top menu bar.
 
 Enjoy the best of Floccus and combine it with favourite sync tool!
