@@ -56,10 +56,15 @@ private:
     void initSystray();
     QList<QString> getSystemIPAddresses(bool locals, bool v4, bool v6);
 
-    #ifdef Q_OS_DARWIN
+#ifdef Q_OS_DARWIN
     QString launchAgentPath() const;
     bool isLaunchAgentEnabled() const;
     bool updateLaunchAgent(bool enabled);
-    #endif
+#endif
+#ifdef Q_OS_WIN
+    QString windowsRunKeyPath() const;
+    bool isWindowsRunEntryEnabled() const;
+    bool updateWindowsRunEntry(bool enabled);
+#endif
 };
 #endif // LOFLOCCUS_H

@@ -44,11 +44,16 @@ LoFloccus::LoFloccus(QWidget *parent)
     // Fetch settings from storage and/or write defaults
     this->initSettings(false, false);
 
-    #ifdef Q_OS_DARWIN
+#ifdef Q_OS_DARWIN
     if (settings->value("startatlogin").toBool()) {
         updateLaunchAgent(true);
     }
-    #endif
+#endif
+#ifdef Q_OS_WIN
+    if (settings->value("startatlogin").toBool()) {
+        updateWindowsRunEntry(true);
+    }
+#endif
 
     // Populate UI with the loaded settings
     this->reloadUiState();
@@ -146,7 +151,12 @@ void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool mak
     #ifdef Q_OS_DARWIN
     defaultStartAtLogin = isLaunchAgentEnabled();
     #endif
-    settings->setValue("startatlogin", settings->value("startatlogin", defaultStartAtLogin));
+    #ifdef Q_OS_WIN
+    defaultStartAtLogin = isWindowsRunEntryEnabled();
+    #endif
+    settings->setValue(
+        "startatlogin",
+        settings->value("startatlogin", defaultStartAtLogin));
 
     settings->setValue("startminimized", settings->value("startminimized", false));
     settings->setValue("hidetosystray", settings->value("hidetosystray", false));
@@ -170,13 +180,17 @@ void LoFloccus::reloadUiState()
     ui->srv_user->setText(settings->value("serveruser").toString());
     ui->srv_passwd->setText(settings->value("serverpasswd").toString());
 
-    ui->startminimized->setChecked(settings->value("startminimized").toBool());
-    #ifdef Q_OS_DARWIN
-    ui->startatlogin->setChecked(settings->value("startatlogin").toBool());
-    #else
+    ui->startminimized->setChecked(
+        settings->value("startminimized").toBool());
+#if defined(Q_OS_DARWIN) || defined(Q_OS_WIN)
+    ui->startatlogin->setChecked(
+        settings->value("startatlogin").toBool());
+    ui->startatlogin->setVisible(true);
+#else
     ui->startatlogin->setVisible(false);
-    #endif
-    ui->hidetosystray->setChecked(settings->value("hidetosystray").toBool());
+#endif
+    ui->hidetosystray->setChecked(
+        settings->value("hidetosystray").toBool());
     ui->sharednetwork->setChecked(settings->value("sharednetwork").toBool());
     ui->portablemode->setChecked(settings->value("portablemode").toBool());
 }
@@ -299,19 +313,37 @@ void LoFloccus::on_startminimized_clicked()
 
 void LoFloccus::on_startatlogin_clicked()
 {
-    #ifdef Q_OS_DARWIN
+#ifdef Q_OS_DARWIN
     bool enabled = ui->startatlogin->isChecked();
     if (!updateLaunchAgent(enabled)) {
-        QMessageBox::warning(this, "LoFloccus", "Could not update login item. Please check permissions and try again.");
+        QString warningText =
+            "Could not update login autostart. "
+            "Please check permissions and try again.";
+        QMessageBox::warning(this, "LoFloccus", warningText);
         bool fallback = isLaunchAgentEnabled();
         ui->startatlogin->setChecked(fallback);
         settings->setValue("startatlogin", fallback);
         return;
     }
     settings->setValue("startatlogin", enabled);
-    #else
-    settings->setValue("startatlogin", ui->startatlogin->isChecked());
-    #endif
+#elif defined(Q_OS_WIN)
+    bool enabled = ui->startatlogin->isChecked();
+    if (!updateWindowsRunEntry(enabled)) {
+        QString warningText =
+            "Could not update login autostart. "
+            "Please check permissions and try again.";
+        QMessageBox::warning(this, "LoFloccus", warningText);
+        bool fallback = isWindowsRunEntryEnabled();
+        ui->startatlogin->setChecked(fallback);
+        settings->setValue("startatlogin", fallback);
+        return;
+    }
+    settings->setValue("startatlogin", enabled);
+#else
+    settings->setValue(
+        "startatlogin",
+        ui->startatlogin->isChecked());
+#endif
 }
 
 void LoFloccus::on_hidetosystray_clicked()
@@ -326,6 +358,51 @@ void LoFloccus::on_sharednetwork_clicked()
     settings->setValue("serveraddr", ui->sharednetwork->isChecked() ? "0.0.0.0" : "127.0.0.1");
     this->restartServer();
 }
+
+#ifdef Q_OS_WIN
+namespace {
+const char kWindowsRunValueName[] = "LoFloccus";
+}
+
+QString LoFloccus::windowsRunKeyPath() const
+{
+    return QStringLiteral(
+        "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\"
+        "CurrentVersion\\Run");
+}
+
+bool LoFloccus::isWindowsRunEntryEnabled() const
+{
+    QSettings runKey(windowsRunKeyPath(), QSettings::NativeFormat);
+    QString value = runKey.value(kWindowsRunValueName).toString();
+    if (value.isEmpty()) {
+        return false;
+    }
+    if (value.startsWith("\"") && value.endsWith("\"")) {
+        value = value.mid(1, value.size() - 2);
+    }
+    QString appPath = QDir::toNativeSeparators(
+        QCoreApplication::applicationFilePath());
+    return QString::compare(
+        value,
+        appPath,
+        Qt::CaseInsensitive) == 0;
+}
+
+bool LoFloccus::updateWindowsRunEntry(bool enabled)
+{
+    QSettings runKey(windowsRunKeyPath(), QSettings::NativeFormat);
+    if (enabled) {
+        QString appPath = QDir::toNativeSeparators(
+            QCoreApplication::applicationFilePath());
+        QString value = "\"" + appPath + "\"";
+        runKey.setValue(kWindowsRunValueName, value);
+        return runKey.status() == QSettings::NoError;
+    }
+    runKey.remove(kWindowsRunValueName);
+    return runKey.status() == QSettings::NoError;
+}
+#endif
 
 #ifdef Q_OS_DARWIN
 namespace {
