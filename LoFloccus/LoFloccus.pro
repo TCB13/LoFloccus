@@ -41,14 +41,15 @@ win32 {
 
 # macOS Build
 mac {
-    ICON = assets/icon.icns
-    QMAKE_TARGET_BUNDLE_PREFIX = "com.tcb13"
-    QMAKE_INFO_PLIST = Info.plist
-    LIBS += -L$${PWD}/libs -lLoFloccusDavDarwin
-    SOURCES += platformdarwin.mm
-    HEADERS += platformdarwin.h
-    LIBS += -framework Foundation
-    LIBS += -framework AppKit
+	ICON = assets/icon.icns
+	QMAKE_TARGET_BUNDLE_PREFIX = "com.tcb13"
+	QMAKE_INFO_PLIST = Info.plist
+	LIBS += -L$${PWD}/libs -lLoFloccusDavDarwin
+	SOURCES += platformdarwin.mm
+	HEADERS += platformdarwin.h
+	LIBS += -framework Foundation
+	LIBS += -framework AppKit
+	LIBS += -framework Security
 }
 
 
