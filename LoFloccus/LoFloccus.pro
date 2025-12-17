@@ -49,7 +49,6 @@ mac {
     HEADERS += platformdarwin.h
     LIBS += -framework Foundation
     LIBS += -framework AppKit
-    LIBS += -framework Security
 }
 
 

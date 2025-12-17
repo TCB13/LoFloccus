@@ -5,15 +5,13 @@
 
 #line 1 "cgo-builtin-export-prolog"
 
-#include <stddef.h>
+#include <stddef.h> /* for ptrdiff_t below */
 
 #ifndef GO_CGO_EXPORT_PROLOGUE_H
 #define GO_CGO_EXPORT_PROLOGUE_H
 
 #ifndef GO_CGO_GOSTRING_TYPEDEF
 typedef struct { const char *p; ptrdiff_t n; } _GoString_;
-extern size_t _GoStringLen(_GoString_ s);
-extern const char *_GoStringPtr(_GoString_ s);
 #endif
 
 #endif
@@ -42,23 +40,11 @@ typedef long long GoInt64;
 typedef unsigned long long GoUint64;
 typedef GoInt64 GoInt;
 typedef GoUint64 GoUint;
-typedef size_t GoUintptr;
+typedef __SIZE_TYPE__ GoUintptr;
 typedef float GoFloat32;
 typedef double GoFloat64;
-#ifdef _MSC_VER
-#if !defined(__cplusplus) || _MSVC_LANG <= 201402L
-#include <complex.h>
-typedef _Fcomplex GoComplex64;
-typedef _Dcomplex GoComplex128;
-#else
-#include <complex>
-typedef std::complex<float> GoComplex64;
-typedef std::complex<double> GoComplex128;
-#endif
-#else
 typedef float _Complex GoComplex64;
 typedef double _Complex GoComplex128;
-#endif
 
 /*
   static assertion to make sure the file is being used on architecture
@@ -82,8 +68,10 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern void serverStart(char* configAddress, char* configPort, char* configDir, char* configUser, char* configPassword);
-extern void serverStop(void);
+
+extern void serverStart(char* p0, char* p1, char* p2, char* p3, char* p4);
+
+extern void serverStop();
 
 #ifdef __cplusplus
 }
