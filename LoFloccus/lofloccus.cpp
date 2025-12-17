@@ -54,6 +54,11 @@ LoFloccus::LoFloccus(QWidget *parent)
         updateWindowsRunEntry(true);
     }
 #endif
+#ifdef Q_OS_LINUX
+    if (settings->value("startatlogin").toBool()) {
+        updateLinuxAutostart(true);
+    }
+#endif
 
     // Populate UI with the loaded settings
     this->reloadUiState();
@@ -154,6 +159,9 @@ void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool mak
     #ifdef Q_OS_WIN
     defaultStartAtLogin = isWindowsRunEntryEnabled();
     #endif
+    #ifdef Q_OS_LINUX
+    defaultStartAtLogin = isLinuxAutostartEnabled();
+    #endif
     settings->setValue(
         "startatlogin",
         settings->value("startatlogin", defaultStartAtLogin));
@@ -182,7 +190,8 @@ void LoFloccus::reloadUiState()
 
     ui->startminimized->setChecked(
         settings->value("startminimized").toBool());
-#if defined(Q_OS_DARWIN) || defined(Q_OS_WIN)
+#if defined(Q_OS_DARWIN) || defined(Q_OS_WIN) || \
+    defined(Q_OS_LINUX)
     ui->startatlogin->setChecked(
         settings->value("startatlogin").toBool());
     ui->startatlogin->setVisible(true);
@@ -339,6 +348,19 @@ void LoFloccus::on_startatlogin_clicked()
         return;
     }
     settings->setValue("startatlogin", enabled);
+#elif defined(Q_OS_LINUX)
+    bool enabled = ui->startatlogin->isChecked();
+    if (!updateLinuxAutostart(enabled)) {
+        QString warningText =
+            "Could not update login autostart. "
+            "Please check permissions and try again.";
+        QMessageBox::warning(this, "LoFloccus", warningText);
+        bool fallback = isLinuxAutostartEnabled();
+        ui->startatlogin->setChecked(fallback);
+        settings->setValue("startatlogin", fallback);
+        return;
+    }
+    settings->setValue("startatlogin", enabled);
 #else
     settings->setValue(
         "startatlogin",
@@ -401,6 +423,144 @@ bool LoFloccus::updateWindowsRunEntry(bool enabled)
     }
     runKey.remove(kWindowsRunValueName);
     return runKey.status() == QSettings::NoError;
+}
+#endif
+
+#ifdef Q_OS_LINUX
+namespace {
+const char kLinuxDesktopFileName[] = "LoFloccus.desktop";
+}
+
+QString LoFloccus::linuxAutostartPath() const
+{
+    QString configDir = QStandardPaths::writableLocation(
+        QStandardPaths::ConfigLocation);
+    if (configDir.isEmpty()) {
+        return QString();
+    }
+    return configDir + "/autostart/" + kLinuxDesktopFileName;
+}
+
+bool LoFloccus::isLinuxAutostartEnabled() const
+{
+    QString desktopPath = linuxAutostartPath();
+    return !desktopPath.isEmpty() && QFile::exists(desktopPath);
+}
+
+bool LoFloccus::writeLinuxAutostartFile(
+    const QString &desktopPath) const
+{
+    if (desktopPath.isEmpty()) {
+        return false;
+    }
+    QDir autostartDir(
+        QFileInfo(desktopPath).absolutePath());
+    if (!autostartDir.exists()
+        && !autostartDir.mkpath(".")) {
+        return false;
+    }
+
+    QSaveFile file(desktopPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        return false;
+    }
+
+    QString execPath = QCoreApplication::applicationFilePath();
+    execPath.replace(" ", "\\ ");
+    QTextStream out(&file);
+    out << "[Desktop Entry]\n";
+    out << "Type=Application\n";
+    out << "Name=LoFloccus\n";
+    out << "Exec=" << execPath << "\n";
+    out << "Terminal=false\n";
+    out << "X-GNOME-Autostart-enabled=true\n";
+
+    return file.commit();
+}
+
+bool LoFloccus::updateLinuxAutostart(bool enabled)
+{
+    QString desktopPath = linuxAutostartPath();
+    if (enabled) {
+        return writeLinuxAutostartFile(desktopPath);
+    }
+    if (desktopPath.isEmpty()) {
+        return false;
+    }
+    if (QFile::exists(desktopPath)
+        && !QFile::remove(desktopPath)) {
+        return false;
+    }
+    return true;
+}
+#endif
+
+#ifdef Q_OS_LINUX
+namespace {
+const char kLinuxDesktopFileName[] = "LoFloccus.desktop";
+}
+
+QString LoFloccus::linuxAutostartPath() const
+{
+    QString configDir = QStandardPaths::writableLocation(
+        QStandardPaths::ConfigLocation);
+    if (configDir.isEmpty()) {
+        return QString();
+    }
+    return configDir + "/autostart/" + kLinuxDesktopFileName;
+}
+
+bool LoFloccus::isLinuxAutostartEnabled() const
+{
+    QString desktopPath = linuxAutostartPath();
+    return !desktopPath.isEmpty() && QFile::exists(desktopPath);
+}
+
+bool LoFloccus::writeLinuxAutostartFile(
+    const QString &desktopPath) const
+{
+    if (desktopPath.isEmpty()) {
+        return false;
+    }
+    QDir autostartDir(
+        QFileInfo(desktopPath).absolutePath());
+    if (!autostartDir.exists()
+        && !autostartDir.mkpath(".")) {
+        return false;
+    }
+
+    QSaveFile file(desktopPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        return false;
+    }
+
+    QString execPath = QCoreApplication::applicationFilePath();
+    execPath.replace(" ", "\\ ");
+    QTextStream out(&file);
+    out << "[Desktop Entry]\n";
+    out << "Type=Application\n";
+    out << "Name=LoFloccus\n";
+    out << "Exec=" << execPath << "\n";
+    out << "Terminal=false\n";
+    out << "X-GNOME-Autostart-enabled=true\n";
+
+    return file.commit();
+}
+
+bool LoFloccus::updateLinuxAutostart(bool enabled)
+{
+    QString desktopPath = linuxAutostartPath();
+    if (enabled) {
+        return writeLinuxAutostartFile(desktopPath);
+    }
+    if (desktopPath.isEmpty()) {
+        return false;
+    }
+    if (QFile::exists(desktopPath)
+        && !QFile::remove(desktopPath)) {
+        return false;
+    }
+    return true;
 }
 #endif
 
