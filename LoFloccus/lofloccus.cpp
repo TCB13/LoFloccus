@@ -12,6 +12,11 @@
 #include <QFileDialog>
 #include <QNetworkInterface>
 #include <QStandardPaths>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QSaveFile>
+#include <QTextStream>
 
 #ifdef Q_OS_WIN
 #include "libLoFloccusDavWin64.h"
@@ -38,6 +43,12 @@ LoFloccus::LoFloccus(QWidget *parent)
 
     // Fetch settings from storage and/or write defaults
     this->initSettings(false, false);
+
+    #ifdef Q_OS_DARWIN
+    if (settings->value("startatlogin").toBool()) {
+        updateLaunchAgent(true);
+    }
+    #endif
 
     // Populate UI with the loaded settings
     this->reloadUiState();
@@ -131,6 +142,12 @@ void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool mak
     settings->setValue("serveruser", settings->value("serveruser", "floccus"));
     settings->setValue("serverpasswd", settings->value("serverpasswd", defaultPasswd));
 
+    bool defaultStartAtLogin = false;
+    #ifdef Q_OS_DARWIN
+    defaultStartAtLogin = isLaunchAgentEnabled();
+    #endif
+    settings->setValue("startatlogin", settings->value("startatlogin", defaultStartAtLogin));
+
     settings->setValue("startminimized", settings->value("startminimized", false));
     settings->setValue("hidetosystray", settings->value("hidetosystray", false));
     settings->setValue("sharednetwork", settings->value("sharednetwork", false));
@@ -154,6 +171,11 @@ void LoFloccus::reloadUiState()
     ui->srv_passwd->setText(settings->value("serverpasswd").toString());
 
     ui->startminimized->setChecked(settings->value("startminimized").toBool());
+    #ifdef Q_OS_DARWIN
+    ui->startatlogin->setChecked(settings->value("startatlogin").toBool());
+    #else
+    ui->startatlogin->setVisible(false);
+    #endif
     ui->hidetosystray->setChecked(settings->value("hidetosystray").toBool());
     ui->sharednetwork->setChecked(settings->value("sharednetwork").toBool());
     ui->portablemode->setChecked(settings->value("portablemode").toBool());
@@ -275,6 +297,23 @@ void LoFloccus::on_startminimized_clicked()
     settings->setValue("startminimized", ui->startminimized->isChecked());
 }
 
+void LoFloccus::on_startatlogin_clicked()
+{
+    #ifdef Q_OS_DARWIN
+    bool enabled = ui->startatlogin->isChecked();
+    if (!updateLaunchAgent(enabled)) {
+        QMessageBox::warning(this, "LoFloccus", "Could not update login item. Please check permissions and try again.");
+        bool fallback = isLaunchAgentEnabled();
+        ui->startatlogin->setChecked(fallback);
+        settings->setValue("startatlogin", fallback);
+        return;
+    }
+    settings->setValue("startatlogin", enabled);
+    #else
+    settings->setValue("startatlogin", ui->startatlogin->isChecked());
+    #endif
+}
+
 void LoFloccus::on_hidetosystray_clicked()
 {
     settings->setValue("hidetosystray", ui->hidetosystray->isChecked());
@@ -288,3 +327,60 @@ void LoFloccus::on_sharednetwork_clicked()
     this->restartServer();
 }
 
+#ifdef Q_OS_DARWIN
+namespace {
+const char kLaunchAgentLabel[] = "com.lofloccus.app.loginitem";
+}
+
+QString LoFloccus::launchAgentPath() const
+{
+    QString agentsDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/Library/LaunchAgents";
+    return agentsDir + "/" + kLaunchAgentLabel + ".plist";
+}
+
+bool LoFloccus::isLaunchAgentEnabled() const
+{
+    return QFile::exists(launchAgentPath());
+}
+
+bool LoFloccus::updateLaunchAgent(bool enabled)
+{
+    QString plistPath = launchAgentPath();
+    if (enabled) {
+        QDir dir(QFileInfo(plistPath).absolutePath());
+        if (!dir.exists() && !dir.mkpath(".")) {
+            return false;
+        }
+
+        QSaveFile file(plistPath);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            return false;
+        }
+
+        QString appPath = QCoreApplication::applicationFilePath();
+        QTextStream out(&file);
+        out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+        out << "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
+        out << "<plist version=\"1.0\">\n";
+        out << "<dict>\n";
+        out << "  <key>Label</key>\n";
+        out << "  <string>" << kLaunchAgentLabel << "</string>\n";
+        out << "  <key>ProgramArguments</key>\n";
+        out << "  <array>\n";
+        out << "    <string>" << appPath.toHtmlEscaped() << "</string>\n";
+        out << "  </array>\n";
+        out << "  <key>RunAtLoad</key>\n";
+        out << "  <true/>\n";
+        out << "</dict>\n";
+        out << "</plist>\n";
+
+        return file.commit();
+    }
+
+    if (QFile::exists(plistPath) && !QFile::remove(plistPath)) {
+        return false;
+    }
+
+    return true;
+}
+#endif
