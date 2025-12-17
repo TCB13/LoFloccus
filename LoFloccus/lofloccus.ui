@@ -82,7 +82,7 @@
      <item>
       <widget class="QCheckBox" name="startatlogin">
        <property name="text">
-        <string>Start automatically at login (macOS)</string>
+        <string>Start automatically at login</string>
        </property>
       </widget>
      </item>
