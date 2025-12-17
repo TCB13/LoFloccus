@@ -66,5 +66,12 @@ private:
     bool isWindowsRunEntryEnabled() const;
     bool updateWindowsRunEntry(bool enabled);
 #endif
+#ifdef Q_OS_LINUX
+    QString linuxAutostartPath() const;
+    bool isLinuxAutostartEnabled() const;
+    bool updateLinuxAutostart(bool enabled);
+    bool writeLinuxAutostartFile(
+        const QString &desktopPath) const;
+#endif
 };
 #endif // LOFLOCCUS_H
