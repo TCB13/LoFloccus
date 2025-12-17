@@ -174,7 +174,21 @@ void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool mak
 
 void LoFloccus::reloadUiState()
 {
-    ui->xbel_path->setText(settings->value("serverpath").toString());
+	QString displayPath =
+		settings->value("serverpath").toString();
+#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
+	QString homePath = QDir::homePath();
+	if (!homePath.isEmpty()
+		&& displayPath.startsWith(homePath)) {
+		QString suffix = displayPath.mid(homePath.size());
+		if (suffix.isEmpty()) {
+			displayPath = "~";
+		} else if (suffix.startsWith("/")) {
+			displayPath = "~" + suffix;
+		}
+	}
+#endif
+	ui->xbel_path->setText(displayPath);
 
     // Take care of the server addresses, might be just local or all IPs of the machine
     QString serverPort = settings->value("serverport").toString();
