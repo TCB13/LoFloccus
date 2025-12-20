@@ -3,13 +3,13 @@
  <class>LoFloccus</class>
  <widget class="QMainWindow" name="LoFloccus">
   <property name="geometry">
-    <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>462</width>
-      <height>501</height>
-     </rect>
-    </property>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>462</width>
+    <height>474</height>
+   </rect>
+  </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
@@ -65,7 +65,7 @@
       <x>20</x>
       <y>140</y>
       <width>421</width>
-      <height>111</height>
+      <height>113</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -488,7 +488,7 @@
      <x>0</x>
      <y>0</y>
      <width>462</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
