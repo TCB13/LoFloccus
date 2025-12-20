@@ -3,13 +3,13 @@
  <class>LoFloccus</class>
  <widget class="QMainWindow" name="LoFloccus">
   <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>462</width>
-    <height>441</height>
-   </rect>
-  </property>
+    <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>462</width>
+      <height>501</height>
+     </rect>
+    </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>260</y>
+      <y>280</y>
       <width>431</width>
       <height>16</height>
      </rect>
@@ -65,7 +65,7 @@
       <x>20</x>
       <y>140</y>
       <width>421</width>
-      <height>91</height>
+      <height>111</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -76,6 +76,13 @@
       <widget class="QCheckBox" name="startminimized">
        <property name="text">
         <string>Start minimized</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="startatlogin">
+       <property name="text">
+        <string>Start automatically at login</string>
        </property>
       </widget>
      </item>
@@ -106,7 +113,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>290</y>
+      <y>310</y>
       <width>411</width>
       <height>36</height>
      </rect>
@@ -135,9 +142,9 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>340</y>
+      <y>360</y>
       <width>401</width>
-      <height>51</height>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="_2">
@@ -334,7 +341,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>240</y>
+      <y>260</y>
       <width>441</width>
       <height>16</height>
      </rect>
@@ -456,7 +463,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>400</y>
+      <y>420</y>
       <width>411</width>
       <height>21</height>
      </rect>

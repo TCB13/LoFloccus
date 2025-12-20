@@ -26,6 +26,7 @@ public:
 private slots:
     void on_btn_xbel_localtion_clicked();
     void on_startminimized_clicked();
+    void on_startatlogin_clicked();
     void on_hidetosystray_clicked();
     void on_sharednetwork_clicked();
     void on_portablemode_clicked();
@@ -54,5 +55,23 @@ private:
     void restartServer();
     void initSystray();
     QList<QString> getSystemIPAddresses(bool locals, bool v4, bool v6);
+
+#ifdef Q_OS_DARWIN
+    QString launchAgentPath() const;
+    bool isLaunchAgentEnabled() const;
+    bool updateLaunchAgent(bool enabled);
+#endif
+#ifdef Q_OS_WIN
+    QString windowsRunKeyPath() const;
+    bool isWindowsRunEntryEnabled() const;
+    bool updateWindowsRunEntry(bool enabled);
+#endif
+#ifdef Q_OS_LINUX
+    QString linuxAutostartPath() const;
+    bool isLinuxAutostartEnabled() const;
+    bool updateLinuxAutostart(bool enabled);
+    bool writeLinuxAutostartFile(
+        const QString &desktopPath) const;
+#endif
 };
 #endif // LOFLOCCUS_H

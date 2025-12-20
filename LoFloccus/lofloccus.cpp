@@ -12,6 +12,11 @@
 #include <QFileDialog>
 #include <QNetworkInterface>
 #include <QStandardPaths>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QSaveFile>
+#include <QTextStream>
 
 #ifdef Q_OS_WIN
 #include "libLoFloccusDavWin64.h"
@@ -38,6 +43,23 @@ LoFloccus::LoFloccus(QWidget *parent)
 
     // Fetch settings from storage and/or write defaults
     this->initSettings(false, false);
+
+    bool startAtLoginEnabled = settings->value("startatlogin").toBool();
+    #ifdef Q_OS_DARWIN
+    if (startAtLoginEnabled) {
+        updateLaunchAgent(true);
+    }
+    #endif
+    #ifdef Q_OS_WIN
+    if (startAtLoginEnabled) {
+        updateWindowsRunEntry(true);
+    }
+    #endif
+    #ifdef Q_OS_LINUX
+    if (startAtLoginEnabled) {
+        updateLinuxAutostart(true);
+    }
+    #endif
 
     // Populate UI with the loaded settings
     this->reloadUiState();
@@ -131,6 +153,18 @@ void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool mak
     settings->setValue("serveruser", settings->value("serveruser", "floccus"));
     settings->setValue("serverpasswd", settings->value("serverpasswd", defaultPasswd));
 
+    bool defaultStartAtLogin = false;
+    #ifdef Q_OS_DARWIN
+    defaultStartAtLogin = isLaunchAgentEnabled();
+    #endif
+    #ifdef Q_OS_WIN
+    defaultStartAtLogin = isWindowsRunEntryEnabled();
+    #endif
+    #ifdef Q_OS_LINUX
+    defaultStartAtLogin = isLinuxAutostartEnabled();
+    #endif
+
+    settings->setValue("startatlogin", settings->value("startatlogin", defaultStartAtLogin));
     settings->setValue("startminimized", settings->value("startminimized", false));
     settings->setValue("hidetosystray", settings->value("hidetosystray", false));
     settings->setValue("sharednetwork", settings->value("sharednetwork", false));
@@ -139,7 +173,19 @@ void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool mak
 
 void LoFloccus::reloadUiState()
 {
-    ui->xbel_path->setText(settings->value("serverpath").toString());
+    QString displayPath = settings->value("serverpath").toString();
+#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
+	QString homePath = QDir::homePath();
+    if (!homePath.isEmpty() && displayPath.startsWith(homePath)) {
+		QString suffix = displayPath.mid(homePath.size());
+		if (suffix.isEmpty()) {
+			displayPath = "~";
+		} else if (suffix.startsWith("/")) {
+			displayPath = "~" + suffix;
+		}
+	}
+#endif
+	ui->xbel_path->setText(displayPath);
 
     // Take care of the server addresses, might be just local or all IPs of the machine
     QString serverPort = settings->value("serverport").toString();
@@ -154,6 +200,14 @@ void LoFloccus::reloadUiState()
     ui->srv_passwd->setText(settings->value("serverpasswd").toString());
 
     ui->startminimized->setChecked(settings->value("startminimized").toBool());
+#if defined(Q_OS_DARWIN) || defined(Q_OS_WIN) || \
+    defined(Q_OS_LINUX)
+    ui->startatlogin->setChecked(
+        settings->value("startatlogin").toBool());
+    ui->startatlogin->setVisible(true);
+#else
+    ui->startatlogin->setVisible(false);
+#endif
     ui->hidetosystray->setChecked(settings->value("hidetosystray").toBool());
     ui->sharednetwork->setChecked(settings->value("sharednetwork").toBool());
     ui->portablemode->setChecked(settings->value("portablemode").toBool());
@@ -275,6 +329,54 @@ void LoFloccus::on_startminimized_clicked()
     settings->setValue("startminimized", ui->startminimized->isChecked());
 }
 
+void LoFloccus::on_startatlogin_clicked()
+{
+#ifdef Q_OS_DARWIN
+    bool enabled = ui->startatlogin->isChecked();
+    if (!updateLaunchAgent(enabled)) {
+        QString warningText =
+            "Could not update login autostart. "
+            "Please check permissions and try again.";
+        QMessageBox::warning(this, "LoFloccus", warningText);
+        bool fallback = isLaunchAgentEnabled();
+        ui->startatlogin->setChecked(fallback);
+        settings->setValue("startatlogin", fallback);
+        return;
+    }
+    settings->setValue("startatlogin", enabled);
+#elif defined(Q_OS_WIN)
+    bool enabled = ui->startatlogin->isChecked();
+    if (!updateWindowsRunEntry(enabled)) {
+        QString warningText =
+            "Could not update login autostart. "
+            "Please check permissions and try again.";
+        QMessageBox::warning(this, "LoFloccus", warningText);
+        bool fallback = isWindowsRunEntryEnabled();
+        ui->startatlogin->setChecked(fallback);
+        settings->setValue("startatlogin", fallback);
+        return;
+    }
+    settings->setValue("startatlogin", enabled);
+#elif defined(Q_OS_LINUX)
+    bool enabled = ui->startatlogin->isChecked();
+    if (!updateLinuxAutostart(enabled)) {
+        QString warningText =
+            "Could not update login autostart. "
+            "Please check permissions and try again.";
+        QMessageBox::warning(this, "LoFloccus", warningText);
+        bool fallback = isLinuxAutostartEnabled();
+        ui->startatlogin->setChecked(fallback);
+        settings->setValue("startatlogin", fallback);
+        return;
+    }
+    settings->setValue("startatlogin", enabled);
+#else
+    settings->setValue(
+        "startatlogin",
+        ui->startatlogin->isChecked());
+#endif
+}
+
 void LoFloccus::on_hidetosystray_clicked()
 {
     settings->setValue("hidetosystray", ui->hidetosystray->isChecked());
@@ -288,3 +390,174 @@ void LoFloccus::on_sharednetwork_clicked()
     this->restartServer();
 }
 
+#ifdef Q_OS_WIN
+namespace {
+const char kWindowsRunValueName[] = "LoFloccus";
+}
+
+QString LoFloccus::windowsRunKeyPath() const
+{
+    return QStringLiteral(
+        "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\"
+        "CurrentVersion\\Run");
+}
+
+bool LoFloccus::isWindowsRunEntryEnabled() const
+{
+    QSettings runKey(windowsRunKeyPath(), QSettings::NativeFormat);
+    QString value = runKey.value(kWindowsRunValueName).toString();
+    if (value.isEmpty()) {
+        return false;
+    }
+    if (value.startsWith("\"") && value.endsWith("\"")) {
+        value = value.mid(1, value.size() - 2);
+    }
+    QString appPath = QDir::toNativeSeparators(
+        QCoreApplication::applicationFilePath());
+    return QString::compare(
+        value,
+        appPath,
+        Qt::CaseInsensitive) == 0;
+}
+
+bool LoFloccus::updateWindowsRunEntry(bool enabled)
+{
+    QSettings runKey(windowsRunKeyPath(), QSettings::NativeFormat);
+    if (enabled) {
+        QString appPath = QDir::toNativeSeparators(
+            QCoreApplication::applicationFilePath());
+        QString value = "\"" + appPath + "\"";
+        runKey.setValue(kWindowsRunValueName, value);
+        return runKey.status() == QSettings::NoError;
+    }
+    runKey.remove(kWindowsRunValueName);
+    return runKey.status() == QSettings::NoError;
+}
+#endif
+
+#ifdef Q_OS_LINUX
+namespace {
+const char kLinuxDesktopFileName[] = "LoFloccus.desktop";
+}
+
+QString LoFloccus::linuxAutostartPath() const
+{
+    QString configDir = QStandardPaths::writableLocation(
+        QStandardPaths::ConfigLocation);
+    if (configDir.isEmpty()) {
+        return QString();
+    }
+    return configDir + "/autostart/" + kLinuxDesktopFileName;
+}
+
+bool LoFloccus::isLinuxAutostartEnabled() const
+{
+    QString desktopPath = linuxAutostartPath();
+    return !desktopPath.isEmpty() && QFile::exists(desktopPath);
+}
+
+bool LoFloccus::writeLinuxAutostartFile(
+    const QString &desktopPath) const
+{
+    if (desktopPath.isEmpty()) {
+        return false;
+    }
+    QDir autostartDir(
+        QFileInfo(desktopPath).absolutePath());
+    if (!autostartDir.exists()
+        && !autostartDir.mkpath(".")) {
+        return false;
+    }
+
+    QSaveFile file(desktopPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        return false;
+    }
+
+    QString execPath = QCoreApplication::applicationFilePath();
+    execPath.replace(" ", "\\ ");
+    QTextStream out(&file);
+    out << "[Desktop Entry]\n";
+    out << "Type=Application\n";
+    out << "Name=LoFloccus\n";
+    out << "Exec=" << execPath << "\n";
+    out << "Terminal=false\n";
+    out << "X-GNOME-Autostart-enabled=true\n";
+
+    return file.commit();
+}
+
+bool LoFloccus::updateLinuxAutostart(bool enabled)
+{
+    QString desktopPath = linuxAutostartPath();
+    if (enabled) {
+        return writeLinuxAutostartFile(desktopPath);
+    }
+    if (desktopPath.isEmpty()) {
+        return false;
+    }
+    if (QFile::exists(desktopPath)
+        && !QFile::remove(desktopPath)) {
+        return false;
+    }
+    return true;
+}
+#endif
+
+#ifdef Q_OS_DARWIN
+namespace {
+const char kLaunchAgentLabel[] = "com.lofloccus.app.loginitem";
+}
+
+QString LoFloccus::launchAgentPath() const
+{
+    QString agentsDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/Library/LaunchAgents";
+    return agentsDir + "/" + kLaunchAgentLabel + ".plist";
+}
+
+bool LoFloccus::isLaunchAgentEnabled() const
+{
+    return QFile::exists(launchAgentPath());
+}
+
+bool LoFloccus::updateLaunchAgent(bool enabled)
+{
+    QString plistPath = launchAgentPath();
+    if (enabled) {
+        QDir dir(QFileInfo(plistPath).absolutePath());
+        if (!dir.exists() && !dir.mkpath(".")) {
+            return false;
+        }
+
+        QSaveFile file(plistPath);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            return false;
+        }
+
+        QString appPath = QCoreApplication::applicationFilePath();
+        QTextStream out(&file);
+        out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+        out << "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
+        out << "<plist version=\"1.0\">\n";
+        out << "<dict>\n";
+        out << "  <key>Label</key>\n";
+        out << "  <string>" << kLaunchAgentLabel << "</string>\n";
+        out << "  <key>ProgramArguments</key>\n";
+        out << "  <array>\n";
+        out << "    <string>" << appPath.toHtmlEscaped() << "</string>\n";
+        out << "  </array>\n";
+        out << "  <key>RunAtLoad</key>\n";
+        out << "  <true/>\n";
+        out << "</dict>\n";
+        out << "</plist>\n";
+
+        return file.commit();
+    }
+
+    if (QFile::exists(plistPath) && !QFile::remove(plistPath)) {
+        return false;
+    }
+
+    return true;
+}
+#endif
