@@ -44,21 +44,22 @@ LoFloccus::LoFloccus(QWidget *parent)
     // Fetch settings from storage and/or write defaults
     this->initSettings(false, false);
 
-#ifdef Q_OS_DARWIN
-    if (settings->value("startatlogin").toBool()) {
+    bool startAtLoginEnabled = settings->value("startatlogin").toBool();
+    #ifdef Q_OS_DARWIN
+    if (startAtLoginEnabled) {
         updateLaunchAgent(true);
     }
-#endif
-#ifdef Q_OS_WIN
-    if (settings->value("startatlogin").toBool()) {
+    #endif
+    #ifdef Q_OS_WIN
+    if (startAtLoginEnabled) {
         updateWindowsRunEntry(true);
     }
-#endif
-#ifdef Q_OS_LINUX
-    if (settings->value("startatlogin").toBool()) {
+    #endif
+    #ifdef Q_OS_LINUX
+    if (startAtLoginEnabled) {
         updateLinuxAutostart(true);
     }
-#endif
+    #endif
 
     // Populate UI with the loaded settings
     this->reloadUiState();
@@ -162,10 +163,8 @@ void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool mak
     #ifdef Q_OS_LINUX
     defaultStartAtLogin = isLinuxAutostartEnabled();
     #endif
-    settings->setValue(
-        "startatlogin",
-        settings->value("startatlogin", defaultStartAtLogin));
 
+    settings->setValue("startatlogin", settings->value("startatlogin", defaultStartAtLogin));
     settings->setValue("startminimized", settings->value("startminimized", false));
     settings->setValue("hidetosystray", settings->value("hidetosystray", false));
     settings->setValue("sharednetwork", settings->value("sharednetwork", false));
@@ -174,12 +173,10 @@ void LoFloccus::initSettings(bool makeExistingSettingsPortable = false, bool mak
 
 void LoFloccus::reloadUiState()
 {
-	QString displayPath =
-		settings->value("serverpath").toString();
+    QString displayPath = settings->value("serverpath").toString();
 #if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
 	QString homePath = QDir::homePath();
-	if (!homePath.isEmpty()
-		&& displayPath.startsWith(homePath)) {
+    if (!homePath.isEmpty() && displayPath.startsWith(homePath)) {
 		QString suffix = displayPath.mid(homePath.size());
 		if (suffix.isEmpty()) {
 			displayPath = "~";
@@ -202,8 +199,7 @@ void LoFloccus::reloadUiState()
     ui->srv_user->setText(settings->value("serveruser").toString());
     ui->srv_passwd->setText(settings->value("serverpasswd").toString());
 
-    ui->startminimized->setChecked(
-        settings->value("startminimized").toBool());
+    ui->startminimized->setChecked(settings->value("startminimized").toBool());
 #if defined(Q_OS_DARWIN) || defined(Q_OS_WIN) || \
     defined(Q_OS_LINUX)
     ui->startatlogin->setChecked(
@@ -212,8 +208,7 @@ void LoFloccus::reloadUiState()
 #else
     ui->startatlogin->setVisible(false);
 #endif
-    ui->hidetosystray->setChecked(
-        settings->value("hidetosystray").toBool());
+    ui->hidetosystray->setChecked(settings->value("hidetosystray").toBool());
     ui->sharednetwork->setChecked(settings->value("sharednetwork").toBool());
     ui->portablemode->setChecked(settings->value("portablemode").toBool());
 }

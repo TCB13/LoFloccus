@@ -26,7 +26,7 @@ FORMS += \
     lofloccus.ui
 
 # Generic for all builds
-VERSION = 1.2.4
+VERSION = 1.2.5
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 INCLUDEPATH += $${PWD}/libs
 
@@ -35,7 +35,7 @@ win32 {
     RC_ICONS = assets/icon.ico
     QMAKE_TARGET_PRODUCT = LoFloccus
     QMAKE_TARGET_DESCRIPTION = LoFloccus
-    QMAKE_TARGET_COPYRIGHT = Copyright © 2019-2022 TCB13
+    QMAKE_TARGET_COPYRIGHT = Copyright © 2019-2025 TCB13
     LIBS += -L$${PWD}/libs -lLoFloccusDavWin64
 }
 
