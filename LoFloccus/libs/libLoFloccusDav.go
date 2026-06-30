@@ -2,15 +2,16 @@
 libLoFloccusDav - LoFloccus WebDav Server
 
 Complied with:
-- go version go1.14.2 windows/amd64
-- go version go1.14.2 darwin/amd64
+- go version go1.25.5 windows/amd64
+- go version go1.25.5 darwin/amd64
 
 How to install/compile this as a static library:
-1. go get "golang.org/x/net/webdav"
-2. Build ir for your architecture:
-2.1. Windows (dev/release): go build -buildmode c-archive -o libLoFloccusDavWin64.a libLoFloccusDav.go
-2.2. macOS (dev): go build -buildmode c-shared -o libLoFloccusDavDarwin.a libLoFloccusDav.go
-2.3. macOS (release): go build -buildmode c-archive -o libLoFloccusDavDarwin.a libLoFloccusDav.go
+1. go mod init lofloccus
+2. go get "golang.org/x/net/webdav"
+3. Build ir for your architecture:
+4.1. Windows (dev/release): go build -buildmode c-archive -o libLoFloccusDavWin64.a libLoFloccusDav.go
+4.2. macOS (dev): go build -buildmode c-shared -o libLoFloccusDavDarwin.a libLoFloccusDav.go
+4.3. macOS (release): go build -buildmode c-archive -o libLoFloccusDavDarwin.a libLoFloccusDav.go
  */
 
 package main 
@@ -83,15 +84,16 @@ func serverStart(configAddress *C.char, configPort *C.char, configDir *C.char, c
 		}
 
 		// Restrict WebDav to the current folder & read/writes to .xbel files
-		if (
-			!strings.HasSuffix(request.RequestURI, ".xbel")
-			&& !strings.HasSuffix(request.RequestURI, ".xbel.lock")
-			&& !strings.HasSuffix(request.RequestURI, ".html")
-			&& !strings.HasSuffix(request.RequestURI, ".htm")
-			&& !strings.HasSuffix(request.RequestURI, ".temp")
-			&& request.RequestURI != "/" 
-		) || (request.RequestURI == "/" && (request.Method != "HEAD" && request.Method != "PROPFIND")) {
-			errorFsAccessMsg := "LoFloccus: unauthorized filesystem access detected. LoFloccus WebDAV server is restricted to '*.xbel' and '*.xbel.lock' files."
+		isAllowedExt :=
+		    strings.HasSuffix(request.RequestURI, ".xbel") ||
+		    strings.HasSuffix(request.RequestURI, ".xbel.lock") ||
+		    strings.HasSuffix(request.RequestURI, ".html") ||
+		    strings.HasSuffix(request.RequestURI, ".htm") ||
+		    strings.HasSuffix(request.RequestURI, ".temp")
+		isRoot := request.RequestURI == "/"
+
+		if (!isAllowedExt && !isRoot) || (isRoot && request.Method != "HEAD" && request.Method != "PROPFIND") {
+			errorFsAccessMsg := "LoFloccus: unauthorized filesystem access detected. LoFloccus WebDAV server is restricted to '*.xbel', '*.xbel.lock', '*.html', '*.htm' and '*.temp' files."
 			log.Printf(request.RequestURI)
 			log.Printf(request.Method)
 			log.Printf(errorFsAccessMsg)
