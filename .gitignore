@@ -9,3 +9,4 @@ rcc*
 *.syso
 *.ini
 
+.DS_Store
