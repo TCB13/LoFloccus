@@ -10,7 +10,7 @@ Sync Floccus to a Local Folder!
 
 ## Download LoFloccus
 
-- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.2.4/LoFloccus-1-2-4-Win.zip
+- **Windows**: https://github.com/TCB13/LoFloccus/releases/download/1.2.5/LoFloccus-1-2-5-Win.zip
 - **macOS**: https://github.com/TCB13/LoFloccus/releases/download/1.2.4/LoFloccus-1-2-4-macOS.zip
 
 ## Why and How
