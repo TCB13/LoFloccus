@@ -92,7 +92,7 @@ func serverStart(configAddress *C.char, configPort *C.char, configDir *C.char, c
 		    strings.HasSuffix(request.RequestURI, ".temp")
 		isRoot := request.RequestURI == "/"
 
-		if (!isAllowedExt && !isRoot) || (isRoot && request.Method != "HEAD" && request.Method != "PROPFIND") {
+		if (!isAllowedExt && !isRoot) || (isRoot && request.Method != "HEAD" && request.Method != "PROPFIND" && request.Method != "OPTIONS") {
 			errorFsAccessMsg := "LoFloccus: unauthorized filesystem access detected. LoFloccus WebDAV server is restricted to '*.xbel', '*.xbel.lock', '*.html', '*.htm' and '*.temp' files."
 			log.Printf(request.RequestURI)
 			log.Printf(request.Method)
