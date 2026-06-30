@@ -21,7 +21,7 @@ Due to browser restrictions, you can't store your browser bookmarks in a local f
 
 This tool was designed to:
 1) Accept WebDAV connections from the Floccus;
-2) Restrict Floccus access to a single directory and read/write access limited to `*.xbel` and `*.html` bookmarks files;
+2) Restrict Floccus access to a single directory and read/write access limited to `*.xbel, *.xbel.lock, *.html, *.htm and *.temp` files;
 3) Generate a random port, username and password for each setup;
 4) Store your XBEL/HTML bookmarks location and other settings across sessions;
 5) Minimize to Windows tray / macOS top menu bar.
@@ -29,7 +29,7 @@ This tool was designed to:
 Enjoy the best of Floccus and combine it with favourite sync tool!
 
 ## Compile from Source / Dev Information
-LoFloccus was developed with Qt Creator 4.11.1, Qt 5.14.1 and Golang 1.14.2.
+LoFloccus was developed with Qt Creator 4.11.1, Qt 5.14.1 and Golang 1.25.5.
 
 1. Install Qt
 2. Install Golang
